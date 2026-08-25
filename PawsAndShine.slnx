@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="PawsAndShine.API/PawsAndShine.API.csproj" />
+  <Project Path="PawsAndShine.Application/PawsAndShine.Application.csproj" />
+  <Project Path="PawsAndShine.Domain/PawsAndShine.Domain.csproj" />
+  <Project Path="PawsAndShine.Infrastructure/PawsAndShine.Infrastructure.csproj" />
+</Solution>
