@@ -12,5 +12,15 @@ namespace PawsAndShine.Infrastructure.Data
         public DbSet<Service> Services { get; set; }
         public DbSet<ServiceOption> ServiceOptions { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+ 
+            modelBuilder.Entity<ServiceOption>()
+                .Property(s => s.Price)
+                .HasColumnType("decimal(18,2)");
+        }
+
     }
 }
