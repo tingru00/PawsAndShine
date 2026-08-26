@@ -4,39 +4,57 @@ using System.Text;
 using MediatR;
 using PawsAndShine.Domain.Entities;
 using PawsAndShine.Infrastructure.Data;
+using PawsAndShine.Application.Bookings.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace PawsAndShine.Application.Bookings.Commands
 {
-    public record CreateBookingCommand : IRequest<int>
-    {
-        public DateTime BookingDate { get; init; }
-        public string Notes { get; init; } = string.Empty;
-        public bool IsConfirmed { get; init; }
-        public int CustomerId { get; init; }
-        public int ServiceOptionId { get; init; }
-    }
-
-    public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, int>
+    public record CreateBookingCommand(CreateBookingDto Dto) : IRequest<BookingDto>;
+    
+    public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, BookingDto>
     {
         private readonly ApplicationDbContext _context;
         public CreateBookingCommandHandler(ApplicationDbContext context)
         {
             _context = context;
         }
-        public async Task<int> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
+        public async Task<BookingDto> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
         {
+            var customer = new Customer
+            {
+                FirstName = request.Dto.FirstName,
+                LastName = request.Dto.LastName,
+                Email = request.Dto.Email,
+                PhoneNumber = request.Dto.PhoneNumber
+            };
+
             var booking = new Booking
             {
-                BookingDate = request.BookingDate,
-                Notes = request.Notes,
-                IsConfirmed = request.IsConfirmed,
-                CustomerId = request.CustomerId,
-                ServiceOptionId = request.ServiceOptionId
+                BookingDate = request.Dto.BookingDate,
+                Notes = request.Dto.Notes,
+                Customer = customer, 
+                ServiceOptionId = request.Dto.ServiceOptionId
             };
+
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync(cancellationToken);
-            return booking.Id;
+
+            var serviceOption = await _context.ServiceOptions
+                .Include(so => so.Service)
+                .FirstOrDefaultAsync(so => so.Id == booking.ServiceOptionId, cancellationToken);
+
+            
+            return new BookingDto
+            {
+                Id = booking.Id,
+                CustomerName = $"{customer.FirstName} {customer.LastName}",
+                Email = customer.Email,
+                ServiceName = serviceOption?.Service?.Name ?? string.Empty,
+                ServiceOptionName = serviceOption?.Name ?? string.Empty,
+                Price = serviceOption?.Price ?? 0,
+                BookingDate = booking.BookingDate,
+                Notes = booking.Notes
+            };
         }
     }
      
