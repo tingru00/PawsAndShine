@@ -11,6 +11,8 @@ namespace PawsAndShine.Infrastructure.Data
         
         public DbSet<Service> Services { get; set; }
         public DbSet<ServiceOption> ServiceOptions { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Booking> Bookings { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
