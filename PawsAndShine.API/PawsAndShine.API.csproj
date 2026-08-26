@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PawsAndShine.Application\PawsAndShine.Application.csproj" />
     <ProjectReference Include="..\PawsAndShine.Infrastructure\PawsAndShine.Infrastructure.csproj" />
   </ItemGroup>
 
