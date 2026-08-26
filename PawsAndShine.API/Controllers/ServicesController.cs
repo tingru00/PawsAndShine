@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using PawsAndShine.Application.Services.Queries;
+using PawsAndShine.Application.Services.Commands;
 
 namespace PawsAndShine.API.Controllers
 {
@@ -13,6 +14,13 @@ namespace PawsAndShine.API.Controllers
         {
             _mediator = mediator;
         }
+        [HttpPost]
+        public async Task<IActionResult> CreateService([FromBody] CreateServiceCommand command)
+        {
+            var serviceId = await _mediator.Send(command);
+            return Ok(serviceId);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetServices()
         {
