@@ -16,7 +16,7 @@ namespace PawsAndShine.API.Controllers
             _mediator = mediator;
         }
         [HttpPost]
-        public async Task<IActionResult> CreateService([FromBody] ServiceDto dto)
+        public async Task<IActionResult> CreateService([FromBody] CreateServiceDto dto)
         {
             var command = new CreateServiceCommand(dto);
             var service = await _mediator.Send(command);
