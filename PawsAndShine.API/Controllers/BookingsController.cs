@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PawsAndShine.Application.Bookings.Commands;
+using PawsAndShine.Application.Bookings.Dtos;
 using PawsAndShine.Application.Bookings.Queries;
 
 namespace PawsAndShine.API.Controllers;
@@ -16,14 +17,15 @@ public class BookingsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateBooking([FromBody] CreateBookingCommand command)
+    public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto dto)
     {
-        var bookingId = await _mediator.Send(command);
-        return Ok(bookingId);
+        var command = new CreateBookingCommand(dto);
+        var booking = await _mediator.Send(command);
+        return Ok(booking);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetBookings()
+    public async Task<ActionResult<List<BookingDto>>> GetBookings()
     {
         var bookings = await _mediator.Send(new GetBookingsQuery());
         return Ok(bookings);
