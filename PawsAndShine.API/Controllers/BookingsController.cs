@@ -19,9 +19,21 @@ public class BookingsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto dto)
     {
-        var command = new CreateBookingCommand(dto);
-        var booking = await _mediator.Send(command);
-        return Ok(booking);
+        try
+        {
+            var command = new CreateBookingCommand(dto);
+            var booking = await _mediator.Send(command);
+
+            return Ok(booking);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpGet]

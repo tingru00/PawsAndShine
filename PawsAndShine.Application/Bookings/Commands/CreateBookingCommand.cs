@@ -36,6 +36,26 @@ namespace PawsAndShine.Application.Bookings.Commands
                 ServiceOptionId = request.Dto.ServiceOptionId
             };
 
+            var option = await _context.ServiceOptions
+                .FirstOrDefaultAsync(so => so.Id == booking.ServiceOptionId, cancellationToken);
+            if (option == null)
+            {
+                throw new Exception("Den valda tjänsten hittades inte.");
+            }
+
+            var newStart = request.Dto.BookingDate;
+            var newEnd = newStart.AddMinutes(option.DurationInMinutes);
+
+            var isOverlapping = await _context.Bookings
+                .AnyAsync(b =>
+                    (newStart < b.BookingDate.AddMinutes(b.ServiceOption.DurationInMinutes)) &&
+                    (newEnd > b.BookingDate), cancellationToken);
+            if (isOverlapping)
+            {
+                throw new Exception("Den valda tiden är redan bokad. Vänligen välj en annan tid.");
+            }
+
+
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync(cancellationToken);
 
