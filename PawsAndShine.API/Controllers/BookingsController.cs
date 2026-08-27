@@ -44,5 +44,20 @@ public class BookingsController : ControllerBase
 
 
     }
+
+    [HttpGet("available-times")]
+    public async Task<IActionResult> GetAvailableTimes([FromQuery] DateTime date, [FromQuery] int serviceOptionId)
+    {
+        try
+        {
+            var query = new GetAvailableTimesQuery(date, serviceOptionId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
 }
 
