@@ -9,7 +9,7 @@ using PawsAndShine.Application.Services.Dtos;
 
 namespace PawsAndShine.Application.Services.Commands
 {
-    public record CreateServiceCommand (ServiceDto Dto): IRequest<ServiceDto>;
+    public record CreateServiceCommand (CreateServiceDto Dto): IRequest<ServiceDto>;
 
     public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand, ServiceDto>
     {
@@ -27,7 +27,8 @@ namespace PawsAndShine.Application.Services.Commands
                 Options = request.Dto.Options.Select(o => new ServiceOption
                 {
                     Name = o.Name,
-                    Price = o.Price
+                    Price = o.Price,
+                    DurationInMinutes = o.DurationInMinutes
                 }).ToList()
             };
             _context.Services.Add(service);
@@ -42,7 +43,8 @@ namespace PawsAndShine.Application.Services.Commands
                 {
                     Id = o.Id,
                     Name = o.Name,
-                    Price = o.Price
+                    Price = o.Price,
+                    DurationInMinutes = o.DurationInMinutes
                 }).ToList()
             };
         }
