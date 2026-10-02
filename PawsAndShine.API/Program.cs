@@ -5,13 +5,32 @@ using Microsoft.IdentityModel.Tokens;
 using PawsAndShine.Application.Services.Queries;
 using PawsAndShine.Domain.Entities;
 using PawsAndShine.Infrastructure.Data;
+using PawsAndShine.Infrastructure.Data.Seed;
 using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Info.Title = "PawsAndShine API";
+        document.Info.Version = "v1";
+
+        // Lägg till JWT Bearer
+        var requirements = new Dictionary<string, IEnumerable<string>>
+        {
+            { "Bearer", Enumerable.Empty<string>() }
+        };
+
+        return Task.CompletedTask;
+    });
+});
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -56,7 +75,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "PawsAndShine API v1");
+    });
 }
 
 app.UseHttpsRedirection();
@@ -66,5 +88,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Kör Seed Data vid uppstart
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await DbInitializer.SeedRolesAndAdminAsync(services);
+}
 
 app.Run();
