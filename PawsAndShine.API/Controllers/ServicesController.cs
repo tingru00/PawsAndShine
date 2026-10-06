@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PawsAndShine.Application.Services.Queries;
 using PawsAndShine.Application.Services.Commands;
 using PawsAndShine.Application.Services.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PawsAndShine.API.Controllers
 {
@@ -15,6 +16,8 @@ namespace PawsAndShine.API.Controllers
         {
             _mediator = mediator;
         }
+
+        [Authorize (Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateService([FromBody] CreateServiceDto dto)
         {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace PawsAndShine.Application.Bookings.Dtos.Auth
+namespace PawsAndShine.Application.Auth
 {
     public class RegisterDto
     {

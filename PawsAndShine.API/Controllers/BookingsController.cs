@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PawsAndShine.Application.Bookings.Commands;
 using PawsAndShine.Application.Bookings.Dtos;
@@ -16,6 +17,7 @@ public class BookingsController : ControllerBase
         _mediator = mediator;
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto dto)
     {
@@ -36,14 +38,14 @@ public class BookingsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<List<BookingDto>>> GetBookings()
     {
         var bookings = await _mediator.Send(new GetBookingsQuery());
         return Ok(bookings);
-
-
     }
+
 
     [HttpGet("available-times")]
     public async Task<IActionResult> GetAvailableTimes([FromQuery] DateTime date, [FromQuery] int serviceOptionId)

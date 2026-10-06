@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using PawsAndShine.Application.Bookings.Dtos.Auth;
+using PawsAndShine.Application.Auth;
 using PawsAndShine.Domain.Entities;
+using PawsAndShine.Application.Jwt;
 
 namespace PawsAndShine.API.Controllers
 {
@@ -12,14 +13,17 @@ namespace PawsAndShine.API.Controllers
         // Deklarerar dessa verktyg för att använda i metoderna för inlogg o registering
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly ITokenService _tokenService;
 
         // Konstruktor för att ta emot verktygen o fälten ovan
         public AuthController(
         UserManager<ApplicationUser> userManager,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        ITokenService tokenService)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _tokenService = tokenService;
         }
 
         [HttpPost("register")]
@@ -65,13 +69,14 @@ namespace PawsAndShine.API.Controllers
             }
 
             // Lösenords-check
-            bool IsPassWordValid = await _userManager.CheckPasswordAsync(existinguser, dto.PassWord);
+            bool IsPassWordValid = await _userManager.CheckPasswordAsync(existinguser, dto.Password);
             if (!IsPassWordValid)
             {
                 return Unauthorized("Felaktig e-post eller lösenord.");
             }
 
-            return Ok("Du är inloggad");
+            var token = await _tokenService.CreateTokenAsync(existinguser);
+            return Ok(new { token });
 
         }
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace PawsAndShine.Application.Bookings.Dtos.Auth
+namespace PawsAndShine.Application.Auth
 {
     public class LoginDto
     {
@@ -11,6 +11,6 @@ namespace PawsAndShine.Application.Bookings.Dtos.Auth
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
         [Required]
-        public string PassWord { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 }
