@@ -1,82 +1,67 @@
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Navbar() {
-  const navigate = useNavigate();
-  const token = localStorage.getItem('token');
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('selectedService');
-    navigate('/');
-    window.location.reload();
-  };
-
   return (
     <nav style={{
       display: 'flex',
-      justify: 'space-between',
       alignItems: 'center',
-      padding: '1.2rem 3rem',
+      justifyContent: 'space-between',
+      padding: '1.25rem 2rem',
       backgroundColor: '#ffffff',
-      boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-      position: 'sticky',
-      top: 0,
-      zIndex: 1000
+      borderBottom: '1px solid #f3f4f6',
+      fontFamily: 'sans-serif'
     }}>
-      {/* Logotyp / Startsida */}
-      <Link to="/" style={{ textDecoration: 'none', color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span style={{ fontSize: '1.6rem' }}>🐾</span>
-        <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: '800', letterSpacing: '1px' }}>PAWS & SHINE</h2>
+      {/* Logotyp */}
+      <Link to="/" style={{
+        fontSize: '1.25rem',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        letterSpacing: '0.08em',
+        color: '#000000',
+        textDecoration: 'none'
+      }}>
+        Paws & Shine
       </Link>
 
-      {/* Navigationslänkar */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
-        <Link to="/" style={{ textDecoration: 'none', color: '#333', fontWeight: '500' }}>Tjänster</Link>
-        <Link to="/about" style={{ textDecoration: 'none', color: '#333', fontWeight: '500' }}>Om oss</Link>
-        <Link to="/gallery" style={{ textDecoration: 'none', color: '#333', fontWeight: '500' }}>Galleri</Link>
-        <Link to="/contact" style={{ textDecoration: 'none', color: '#333', fontWeight: '500' }}>Kontakt</Link>
+      {/* Navigeringslänkar */}
+      <div style={{ display: 'flex', gap: '2rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <Link to="/" style={{ color: '#000000', textDecoration: 'none', fontWeight: '500' }}>
+          Startsida
+        </Link>
+        <Link to="/Gallery" style={{ color: '#000000', textDecoration: 'none', fontWeight: '500' }}>
+          Galleri
+        </Link>
+        <Link to="/About" style={{ color: '#000000', textDecoration: 'none', fontWeight: '500' }}>
+          Om oss
+        </Link>
+        <Link to="/Contact" style={{ color: '#000000', textDecoration: 'none', fontWeight: '500' }}>
+          Kontakt
+        </Link>
+      </div>
 
-        {token && (
-          <Link to="/bookings" style={{ textDecoration: 'none', color: '#007bff', fontWeight: '600' }}>
-            Mina Bokningar
-          </Link>
-        )}
-
-        {token ? (
-          <button 
-            onClick={handleLogout}
-            style={{
-              padding: '6px 14px',
-              borderRadius: '20px',
-              border: '1px solid #ccc',
-              background: '#f8f9fa',
-              cursor: 'pointer'
-            }}
+      {/* Profil-ikon */}
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Link 
+          to="/login" 
+          style={{ color: '#000000', display: 'flex', alignItems: 'center' }} 
+          aria-label="Logga in eller registrera dig"
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            strokeWidth={1.5} 
+            stroke="currentColor" 
+            style={{ width: '24px', height: '24px' }}
           >
-            Logga ut
-          </button>
-        ) : (
-          <Link 
-            to="/login" 
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '6px', 
-              textDecoration: 'none', 
-              color: '#1a1a1a',
-              fontWeight: '600',
-              border: '1px solid #1a1a1a',
-              padding: '6px 14px',
-              borderRadius: '20px'
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-            <span>Logga in</span>
-          </Link>
-        )}
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" 
+            />
+          </svg>
+        </Link>
       </div>
     </nav>
   );

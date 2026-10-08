@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import api from '../api';
 import { useNavigate, Link } from 'react-router-dom';
 
-export default function Login() {
+export default function Register() {
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
-    password: ''
+    phoneNumber: '',
+    password: '',
+    confirmPassword: ''
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -22,17 +26,32 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Lösenorden matchar inte');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const response = await api.post('/auth/login', formData);
-      const token = response.data.token;
+      await api.post('/auth/register', {
+        name: formData.name,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        password: formData.password
+      });
 
-      localStorage.setItem('token', token);
-      navigate('/');
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
     } catch (err) {
       console.error(err);
-      setError('Felaktigt användarnamn eller lösenord');
+      setError(
+        err.response?.data?.message || 
+        'Registreringen misslyckades. Kontrollera uppgifterna.'
+      );
     } finally {
       setLoading(false);
     }
@@ -54,25 +73,25 @@ export default function Login() {
         margin: '0 0 0.25rem 0',
         letterSpacing: '-0.02em'
       }}>
-        logga in
+        registrera dig
       </h1>
 
-      {/* Mindre undertext*/}
+      {/* Underrubrik */}
       <p style={{
-        fontSize: '0.85rem',
+        fontSize: '0.8rem',
         color: '#000000',
         margin: '0.75rem 0 3.5rem 0'
       }}>
         eller{' '}
         <Link 
-          to="/Register" 
+          to="/login" 
           style={{
             color: '#000000',
             textDecoration: 'underline',
             fontWeight: '500'
           }}
         >
-          registrera dig
+          logga in
         </Link>
       </p>
 
@@ -90,8 +109,50 @@ export default function Login() {
         </div>
       )}
 
+      {success && (
+        <div style={{
+          backgroundColor: '#f0fdf4',
+          color: '#166534',
+          padding: '0.75rem',
+          borderRadius: '4px',
+          fontSize: '0.85rem',
+          marginBottom: '1.5rem',
+          textAlign: 'left'
+        }}>
+          Konto skapat! Skickar dig till inloggningen...
+        </div>
+      )}
+
       {/* Formulär */}
       <form onSubmit={handleSubmit} style={{ textAlign: 'left' }}>
+        <div style={{ marginBottom: '2rem' }}>
+          <label style={{
+            display: 'block',
+            fontSize: '0.8rem',
+            color: '#374151',
+            marginBottom: '0.25rem'
+          }}>
+            namn *
+          </label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            style={{
+              width: '100%',
+              border: 'none',
+              borderBottom: '1px solid #000000',
+              backgroundColor: 'transparent',
+              padding: '0.5rem 0',
+              fontSize: '0.95rem',
+              outline: 'none',
+              borderRadius: '0'
+            }}
+          />
+        </div>
+
         <div style={{ marginBottom: '2rem' }}>
           <label style={{
             display: 'block',
@@ -120,7 +181,34 @@ export default function Login() {
           />
         </div>
 
-        <div style={{ marginBottom: '2.5rem' }}>
+        <div style={{ marginBottom: '2rem' }}>
+          <label style={{
+            display: 'block',
+            fontSize: '0.8rem',
+            color: '#374151',
+            marginBottom: '0.25rem'
+          }}>
+            telefonnummer
+          </label>
+          <input
+            type="tel"
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            style={{
+              width: '100%',
+              border: 'none',
+              borderBottom: '1px solid #000000',
+              backgroundColor: 'transparent',
+              padding: '0.5rem 0',
+              fontSize: '0.95rem',
+              outline: 'none',
+              borderRadius: '0'
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: '2rem' }}>
           <label style={{
             display: 'block',
             fontSize: '0.8rem',
@@ -133,6 +221,34 @@ export default function Login() {
             type="password"
             name="password"
             value={formData.password}
+            onChange={handleChange}
+            required
+            style={{
+              width: '100%',
+              border: 'none',
+              borderBottom: '1px solid #000000',
+              backgroundColor: 'transparent',
+              padding: '0.5rem 0',
+              fontSize: '0.95rem',
+              outline: 'none',
+              borderRadius: '0'
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: '2.5rem' }}>
+          <label style={{
+            display: 'block',
+            fontSize: '0.8rem',
+            color: '#374151',
+            marginBottom: '0.25rem'
+          }}>
+            bekräfta lösenord *
+          </label>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
             onChange={handleChange}
             required
             style={{
@@ -164,7 +280,7 @@ export default function Login() {
             letterSpacing: '0.03em'
           }}
         >
-          {loading ? 'loggar in...' : 'logga in'}
+          {loading ? 'skapar konto...' : 'registrera'}
         </button>
       </form>
     </div>
