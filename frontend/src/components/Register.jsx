@@ -4,9 +4,9 @@ import { useNavigate, Link } from 'react-router-dom';
 
 export default function Register() {
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    phoneNumber: '',
     password: '',
     confirmPassword: ''
   });
@@ -35,11 +35,11 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await api.post('/auth/register', {
-        name: formData.name,
+      await api.post('/Auth/register', {
         email: formData.email,
-        phoneNumber: formData.phoneNumber,
-        password: formData.password
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName
       });
 
       setSuccess(true);
@@ -65,7 +65,6 @@ export default function Register() {
       fontFamily: 'sans-serif',
       textAlign: 'center'
     }}>
-      {/* Stor rubrik */}
       <h1 style={{
         fontSize: '2.5rem',
         fontWeight: 'normal',
@@ -76,7 +75,6 @@ export default function Register() {
         registrera dig
       </h1>
 
-      {/* Underrubrik */}
       <p style={{
         fontSize: '0.8rem',
         color: '#000000',
@@ -123,7 +121,6 @@ export default function Register() {
         </div>
       )}
 
-      {/* Formulär */}
       <form onSubmit={handleSubmit} style={{ textAlign: 'left' }}>
         <div style={{ marginBottom: '2rem' }}>
           <label style={{
@@ -132,12 +129,40 @@ export default function Register() {
             color: '#374151',
             marginBottom: '0.25rem'
           }}>
-            namn *
+            förnamn *
           </label>
           <input
             type="text"
-            name="name"
-            value={formData.name}
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleChange}
+            required
+            style={{
+              width: '100%',
+              border: 'none',
+              borderBottom: '1px solid #000000',
+              backgroundColor: 'transparent',
+              padding: '0.5rem 0',
+              fontSize: '0.95rem',
+              outline: 'none',
+              borderRadius: '0'
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: '2rem' }}>
+          <label style={{
+            display: 'block',
+            fontSize: '0.8rem',
+            color: '#374151',
+            marginBottom: '0.25rem'
+          }}>
+            efternamn *
+          </label>
+          <input
+            type="text"
+            name="lastName"
+            value={formData.lastName}
             onChange={handleChange}
             required
             style={{
@@ -168,33 +193,6 @@ export default function Register() {
             value={formData.email}
             onChange={handleChange}
             required
-            style={{
-              width: '100%',
-              border: 'none',
-              borderBottom: '1px solid #000000',
-              backgroundColor: 'transparent',
-              padding: '0.5rem 0',
-              fontSize: '0.95rem',
-              outline: 'none',
-              borderRadius: '0'
-            }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '2rem' }}>
-          <label style={{
-            display: 'block',
-            fontSize: '0.8rem',
-            color: '#374151',
-            marginBottom: '0.25rem'
-          }}>
-            telefonnummer
-          </label>
-          <input
-            type="tel"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleChange}
             style={{
               width: '100%',
               border: 'none',
