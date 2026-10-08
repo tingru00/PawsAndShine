@@ -8,7 +8,7 @@ using PawsAndShine.Application.Services.Dtos;
 namespace PawsAndShine.Application.Services.Queries
 {
     public record GetServicesQuery : IRequest<List<ServiceDto>>
-    {  
+    {
     }
 
     public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery, List<ServiceDto>>
@@ -20,21 +20,25 @@ namespace PawsAndShine.Application.Services.Queries
         }
         public async Task<List<ServiceDto>> Handle(GetServicesQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Services
-                .Select(s=> new ServiceDto
+            // 1. Hämta alla services inkl options från databasen
+            var services = await _context.Services
+                .Include(s => s.Options)
+                .ToListAsync(cancellationToken);
+
+            // 2. Mappa till DTO i minnet
+            return services.Select(s => new ServiceDto
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Description = s.Description,
+                Options = s.Options.Select(o => new ServiceOptionDto
                 {
-                    Id = s.Id,
-                    Name = s.Name,
-                    Description = s.Description,
-                    Options = s.Options.Select(o => new ServiceOptionDto
-                    {
-                        Id = o.Id,
-                        Name = o.Name,
-                        Price = o.Price
-                    }).ToList()
-                })
-         .ToListAsync(cancellationToken);
-        }
+                    Id = o.Id,
+                    Name = o.Name,
+                    Price = o.Price
+                }).ToList()
+            }).ToList();
         }
     }
+}
 
