@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: tingru000/pawsandshine-frontend:latest
+    ports:
+      - "80:8080"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    networks:
+      - frontend-net
+    restart: always
+
+  # Backend
+  backend:
+    build:
+      context: .
+      dockerfile: ./PawsAndShine.API/Dockerfile
+    image: tingru000/pawsandshine-backend:latest
+    ports:
+      - "5000:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=PawsAndShineDb;Username=postgres;Password=postgres
+    networks:
+      - frontend-net
+      - backend-net
+    depends_on:
+      - db
+    restart: always
+
+  # 3. Postgre
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: PawsAndShineDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend-net
+    restart: always
+
+# Docker-volym 
+volumes:
+  pgdata:
+
+# Isolerade nätverk 
+networks:
+  frontend-net:
+    driver: bridge
+  backend-net:
+    driver: bridge
