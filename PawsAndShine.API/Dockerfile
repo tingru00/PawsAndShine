@@ -1,5 +1,5 @@
 ﻿# Build
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS build
 WORKDIR /src
 
 # Kopiera projektfilerna för att återställa dependencies
@@ -14,7 +14,7 @@ WORKDIR /src/PawsAndShine.API
 RUN dotnet publish -c Release -o /app/publish
 
 # Runtime
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-preview AS final
 WORKDIR /app
 
 # Kopiera den färdigbyggda koden från Build
